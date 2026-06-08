@@ -47,6 +47,41 @@ MingBo Seal Server is the backend service of the MingBo e-signature and approval
 | Build Tool | Maven 3.8+ |
 | Runtime | JDK 17+ |
 
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="doc/screenshots/login.png" alt="Login"></td>
+    <td><img src="doc/screenshots/dashboard.png" alt="Dashboard"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Login</strong></td>
+    <td align="center"><strong>Dashboard</strong></td>
+  </tr>
+  <tr>
+    <td><img src="doc/screenshots/seal-position.png" alt="Seal Position"></td>
+    <td><img src="doc/screenshots/form-designer.png" alt="Form Designer"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Seal Position Configuration</strong></td>
+    <td align="center"><strong>Form Designer</strong></td>
+  </tr>
+  <tr>
+    <td><img src="doc/screenshots/process-designer.png" alt="Process Designer"></td>
+    <td><img src="doc/screenshots/start-process.png" alt="Start Process"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>BPMN Process Designer</strong></td>
+    <td align="center"><strong>Start Process</strong></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="doc/screenshots/my-applications.png" alt="My Applications"></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><strong>My Applications</strong></td>
+  </tr>
+</table>
+
 ## Module Structure
 
 ```
