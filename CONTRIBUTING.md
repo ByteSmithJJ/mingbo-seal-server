@@ -1,6 +1,6 @@
 # 贡献指南
 
-感谢您考虑为 MingBo Pro 后端项目做出贡献！
+感谢您考虑为 MingBo Seal Server 做出贡献！
 
 ## 行为准则
 
@@ -10,21 +10,32 @@
 
 ### 报告 Bug
 
-1. 在 [Issues](https://github.com/ByteSmithJJ/mingbo-server/issues) 中搜索，确认 Bug 未被报告过
+1. 在 [Issues](https://github.com/ByteSmithJJ/mingbo-seal-server/issues) 中搜索，确认 Bug 未被报告过
 2. 使用 Bug Report 模板创建新 Issue
 3. 提供详细的复现步骤、环境信息和期望行为
+
+### 分支策略
+
+| 分支 | 用途 |
+|------|------|
+| `main` | 稳定发布分支，仅通过 PR 从 `dev` 合入，禁止直推 |
+| `dev` | 日常开发集成分支，所有功能分支从此拉出并合回 |
 
 ### 提交代码
 
 1. **Fork** 本项目
-2. 从 `main` 分支创建 feature 分支
+2. 从 `dev` 分支创建您的 feature 分支：
+   ```bash
+   git checkout dev
+   git checkout -b feature/your-feature
+   ```
 3. 进行代码修改，遵循项目现有代码风格
 4. 确保构建通过：
    ```bash
    mvn clean compile
    mvn clean package
    ```
-5. 提交 Pull Request
+5. 提交 Pull Request **到 `dev` 分支**
 
 ## 开发环境
 
@@ -39,8 +50,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/ByteSmithJJ/mingbo-server.git
-cd mingbo-server
+git clone https://github.com/ByteSmithJJ/mingbo-seal-server.git
+cd mingbo-seal-server
 
 # 初始化数据库（执行 sql/ 目录下的 SQL 文件）
 # 1. ry_20260417.sql  — 基础表结构
@@ -83,7 +94,7 @@ seal-approval-server/
 1. 维护者会审核您的 PR
 2. CI 检查必须全部通过
 3. 可能会要求修改
-4. 审核通过后合并
+4. 审核通过后合并到 `dev` 分支，后续由维护者将 `dev` 合并到 `main` 并发布
 
 ## 许可证
 
