@@ -202,3 +202,7 @@ Contributions are welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for developm
 ## License
 
 This project is open-sourced under the [MIT License](./LICENSE). Portions of the code originate from RuoYi-Vue (Copyright © 2018 RuoYi), used under the MIT license.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ByteSmithJJ/mingbo-seal-server&type=Date)](https://www.star-history.com/#ByteSmithJJ/mingbo-seal-server&Date)

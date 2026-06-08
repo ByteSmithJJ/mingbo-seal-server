@@ -202,3 +202,7 @@ java -jar ruoyi-admin/target/ruoyi-admin.jar
 ## 许可证
 
 本项目基于 [MIT License](./LICENSE) 开源。部分代码来源于 RuoYi-Vue（Copyright © 2018 RuoYi），在 MIT 许可下使用。
+
+## Star 历史
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ByteSmithJJ/mingbo-seal-server&type=Date)](https://www.star-history.com/#ByteSmithJJ/mingbo-seal-server&Date)
