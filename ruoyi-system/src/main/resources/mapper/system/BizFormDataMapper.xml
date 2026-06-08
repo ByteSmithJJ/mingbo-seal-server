@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizFormDataMapper">
+
+    <resultMap type="BizFormData" id="BizFormDataResult">
+        <result property="dataId"     column="data_id"      />
+        <result property="instanceId" column="instance_id"   />
+        <result property="templateId" column="template_id"   />
+        <result property="formData"   column="form_data"     />
+        <result property="createBy"   column="create_by"     />
+        <result property="createTime" column="create_time"   />
+        <result property="updateBy"   column="update_by"     />
+        <result property="updateTime" column="update_time"   />
+    </resultMap>
+
+    <select id="selectFormDataById" parameterType="Long" resultMap="BizFormDataResult">
+        select data_id, instance_id, template_id, form_data, create_by, create_time, update_by, update_time
+        from biz_form_data where data_id = #{dataId}
+    </select>
+
+    <select id="selectFormDataByInstanceId" parameterType="Long" resultMap="BizFormDataResult">
+        select data_id, instance_id, template_id, form_data, create_by, create_time, update_by, update_time
+        from biz_form_data where instance_id = #{instanceId}
+    </select>
+
+    <insert id="insertFormData" parameterType="BizFormData" useGeneratedKeys="true" keyProperty="dataId">
+        insert into biz_form_data (instance_id, template_id, form_data, create_by, create_time)
+        values (#{instanceId}, #{templateId}, #{formData}, #{createBy}, sysdate())
+    </insert>
+
+    <update id="updateFormData" parameterType="BizFormData">
+        update biz_form_data
+        <set>
+            <if test="formData != null">form_data = #{formData},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where instance_id = #{instanceId}
+    </update>
+</mapper>

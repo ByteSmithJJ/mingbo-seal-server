@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizApprovalRecordMapper">
+
+    <resultMap type="BizApprovalRecord" id="BizApprovalRecordResult">
+        <result property="recordId"       column="record_id"        />
+        <result property="instanceId"     column="instance_id"      />
+        <result property="taskId"         column="task_id"          />
+        <result property="nodeCode"       column="node_code"        />
+        <result property="nodeName"       column="node_name"        />
+        <result property="approver"       column="approver"         />
+        <result property="approverDeptId" column="approver_dept_id" />
+        <result property="result"         column="result"           />
+        <result property="comment"        column="comment"          />
+        <result property="approveTime"    column="approve_time"     />
+        <result property="costDuration"   column="cost_duration"    />
+        <result property="createTime"     column="create_time"      />
+    </resultMap>
+
+    <sql id="selectRecordVo">
+        select record_id, instance_id, task_id, node_code, node_name, approver,
+               approver_dept_id, result, comment, approve_time, cost_duration, create_time
+        from biz_approval_record
+    </sql>
+
+    <select id="selectRecordById" parameterType="Long" resultMap="BizApprovalRecordResult">
+        <include refid="selectRecordVo"/> where record_id = #{recordId}
+    </select>
+
+    <select id="selectRecordList" parameterType="BizApprovalRecord" resultMap="BizApprovalRecordResult">
+        <include refid="selectRecordVo"/>
+        <where>
+            <if test="instanceId != null">and instance_id = #{instanceId}</if>
+            <if test="approver != null and approver != ''">and approver = #{approver}</if>
+            <if test="result != null and result != ''">and result = #{result}</if>
+            <if test="taskId != null and taskId != ''">and task_id = #{taskId}</if>
+        </where>
+        order by create_time asc
+    </select>
+
+    <insert id="insertRecord" parameterType="BizApprovalRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into biz_approval_record (
+            instance_id, task_id, node_code, node_name, approver, approver_dept_id,
+            result, comment, approve_time, cost_duration, create_time
+        ) values (
+            #{instanceId}, #{taskId}, #{nodeCode}, #{nodeName}, #{approver}, #{approverDeptId},
+            #{result}, #{comment}, #{approveTime}, #{costDuration}, sysdate()
+        )
+    </insert>
+
+    <update id="updateRecord" parameterType="BizApprovalRecord">
+        update biz_approval_record
+        <set>
+            <if test="result != null">result = #{result},</if>
+            <if test="comment != null">comment = #{comment},</if>
+            <if test="approveTime != null">approve_time = #{approveTime},</if>
+            <if test="costDuration != null">cost_duration = #{costDuration},</if>
+        </set>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteRecordById" parameterType="Long">
+        delete from biz_approval_record where record_id = #{recordId}
+    </delete>
+</mapper>

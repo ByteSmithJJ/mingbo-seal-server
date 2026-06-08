@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizSealRecordMapper">
+
+    <resultMap type="BizSealRecord" id="BizSealRecordResult">
+        <result property="sealRecordId"     column="seal_record_id"      />
+        <result property="instanceId"       column="instance_id"         />
+        <result property="approvalRecordId" column="approval_record_id"  />
+        <result property="sealId"           column="seal_id"             />
+        <result property="positionId"       column="position_id"         />
+        <result property="sealer"           column="sealer"              />
+        <result property="sealTime"         column="seal_time"           />
+        <result property="createBy"         column="create_by"           />
+        <result property="createTime"       column="create_time"         />
+    </resultMap>
+
+    <resultMap type="BizSealRecord" id="BizSealRecordWithDetailResult">
+        <id property="sealRecordId" column="seal_record_id"/>
+        <result property="instanceId"       column="instance_id"/>
+        <result property="approvalRecordId" column="approval_record_id"/>
+        <result property="sealId"           column="seal_id"/>
+        <result property="positionId"       column="position_id"/>
+        <result property="sealer"           column="sealer"/>
+        <result property="sealTime"         column="seal_time"/>
+        <result property="sealName"         column="seal_name"/>
+        <result property="sealImage"        column="seal_image"/>
+        <result property="posX"             column="pos_x"/>
+        <result property="posY"             column="pos_y"/>
+        <result property="sealWidth"        column="seal_width"/>
+        <result property="sealHeight"       column="seal_height"/>
+    </resultMap>
+
+    <sql id="selectRecordVo">
+        select sr.seal_record_id, sr.instance_id, sr.approval_record_id, sr.seal_id,
+               sr.position_id, sr.sealer, sr.seal_time, sr.create_by, sr.create_time
+        from biz_seal_record sr
+    </sql>
+
+    <select id="selectRecordById" parameterType="Long" resultMap="BizSealRecordResult">
+        <include refid="selectRecordVo"/> where sr.seal_record_id = #{sealRecordId}
+    </select>
+
+    <select id="selectRecordList" parameterType="BizSealRecord" resultMap="BizSealRecordResult">
+        <include refid="selectRecordVo"/>
+        <where>
+            <if test="instanceId != null">and sr.instance_id = #{instanceId}</if>
+            <if test="sealId != null">and sr.seal_id = #{sealId}</if>
+        </where>
+        order by sr.create_time desc
+    </select>
+
+    <select id="selectSealRecordsByInstanceId" parameterType="Long" resultMap="BizSealRecordWithDetailResult">
+        select sr.*, s.seal_name, s.seal_image, sp.pos_x, sp.pos_y, sp.seal_width, sp.seal_height
+        from biz_seal_record sr
+        left join biz_seal s on sr.seal_id = s.seal_id
+        left join biz_seal_position sp on sr.position_id = sp.position_id
+        where sr.instance_id = #{instanceId}
+        order by sr.create_time desc
+    </select>
+
+    <insert id="insertRecord" parameterType="BizSealRecord" useGeneratedKeys="true" keyProperty="sealRecordId">
+        insert into biz_seal_record (
+            instance_id, approval_record_id, seal_id, position_id,
+            sealer, seal_time, create_by, create_time
+        ) values (
+            #{instanceId}, #{approvalRecordId}, #{sealId}, #{positionId},
+            #{sealer}, #{sealTime}, #{createBy}, sysdate()
+        )
+    </insert>
+
+    <delete id="deleteRecordById" parameterType="Long">
+        delete from biz_seal_record where seal_record_id = #{sealRecordId}
+    </delete>
+</mapper>

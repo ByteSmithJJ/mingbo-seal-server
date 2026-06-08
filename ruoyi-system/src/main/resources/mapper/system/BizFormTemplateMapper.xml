@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizFormTemplateMapper">
+
+    <resultMap type="BizFormTemplate" id="BizFormTemplateResult">
+        <result property="templateId"     column="template_id"     />
+        <result property="templateName"   column="template_name"   />
+        <result property="templateKey"    column="template_key"    />
+        <result property="formConfig"     column="form_config"     />
+        <result property="version"        column="version"         />
+        <result property="status"         column="status"          />
+        <result property="delFlag"        column="del_flag"        />
+        <result property="createBy"       column="create_by"       />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateBy"       column="update_by"       />
+        <result property="updateTime"     column="update_time"     />
+        <result property="remark"         column="remark"          />
+    </resultMap>
+
+    <sql id="selectTemplateVo">
+        select template_id, template_name, template_key, form_config, version, status, del_flag,
+               create_by, create_time, update_by, update_time, remark
+        from biz_form_template
+    </sql>
+
+    <select id="selectTemplateById" parameterType="Long" resultMap="BizFormTemplateResult">
+        <include refid="selectTemplateVo"/>
+        where template_id = #{templateId}
+    </select>
+
+    <select id="selectTemplateList" parameterType="BizFormTemplate" resultMap="BizFormTemplateResult">
+        <include refid="selectTemplateVo"/>
+        <where>
+            <if test="templateName != null and templateName != ''">
+                AND template_name like concat('%', #{templateName}, '%')
+            </if>
+            <if test="templateKey != null and templateKey != ''">
+                AND template_key like concat('%', #{templateKey}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            and del_flag = '0'
+        </where>
+        order by template_id desc
+    </select>
+
+    <select id="checkTemplateKeyUnique" parameterType="BizFormTemplate" resultMap="BizFormTemplateResult">
+        <include refid="selectTemplateVo"/>
+        where template_key = #{templateKey} and del_flag = '0'
+        <if test="templateId != null">
+            and template_id != #{templateId}
+        </if>
+        limit 1
+    </select>
+
+    <insert id="insertTemplate" parameterType="BizFormTemplate" useGeneratedKeys="true" keyProperty="templateId">
+        insert into biz_form_template (
+            <if test="templateName != null and templateName != ''">template_name,</if>
+            <if test="templateKey != null and templateKey != ''">template_key,</if>
+            <if test="formConfig != null">form_config,</if>
+            <if test="version != null">version,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="templateName != null and templateName != ''">#{templateName},</if>
+            <if test="templateKey != null and templateKey != ''">#{templateKey},</if>
+            <if test="formConfig != null">#{formConfig},</if>
+            <if test="version != null">#{version},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateTemplate" parameterType="BizFormTemplate">
+        update biz_form_template
+        <set>
+            <if test="templateName != null and templateName != ''">template_name = #{templateName},</if>
+            <if test="templateKey != null and templateKey != ''">template_key = #{templateKey},</if>
+            <if test="formConfig != null">form_config = #{formConfig},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where template_id = #{templateId}
+    </update>
+
+    <delete id="deleteTemplateById" parameterType="Long">
+        update biz_form_template set del_flag = '2' where template_id = #{templateId}
+    </delete>
+
+    <delete id="deleteTemplateByIds" parameterType="Long">
+        update biz_form_template set del_flag = '2' where template_id in
+        <foreach item="templateId" collection="array" open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizProcessInstanceMapper">
+
+    <resultMap type="BizProcessInstance" id="BizProcessInstanceResult">
+        <result property="instanceId"     column="instance_id"     />
+        <result property="definitionId"   column="definition_id"   />
+        <result property="definitionName" column="definition_name" />
+        <result property="formTemplateId" column="form_template_id"/>
+        <result property="procInstId"     column="proc_inst_id"    />
+        <result property="businessNo"     column="business_no"     />
+        <result property="title"          column="title"           />
+        <result property="status"         column="status"          />
+        <result property="currentNodeCode" column="current_node_code"/>
+        <result property="currentNodeName" column="current_node_name"/>
+        <result property="applicant"      column="applicant"       />
+        <result property="applicantDeptId" column="applicant_dept_id"/>
+        <result property="applyTime"      column="apply_time"      />
+        <result property="completeTime"   column="complete_time"   />
+        <result property="createBy"       column="create_by"       />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateBy"       column="update_by"       />
+        <result property="updateTime"     column="update_time"     />
+    </resultMap>
+
+    <sql id="selectInstanceVo">
+        select instance_id, definition_id, definition_name, form_template_id, proc_inst_id,
+               business_no, title, status, current_node_code, current_node_name, applicant,
+               applicant_dept_id, apply_time, complete_time, create_by, create_time, update_by, update_time
+        from biz_process_instance
+    </sql>
+
+    <select id="selectInstanceById" parameterType="Long" resultMap="BizProcessInstanceResult">
+        <include refid="selectInstanceVo"/>
+        where instance_id = #{instanceId}
+    </select>
+
+    <select id="selectInstanceByProcInstId" parameterType="String" resultMap="BizProcessInstanceResult">
+        <include refid="selectInstanceVo"/>
+        where proc_inst_id = #{procInstId}
+    </select>
+
+    <select id="selectInstanceList" parameterType="BizProcessInstance" resultMap="BizProcessInstanceResult">
+        <include refid="selectInstanceVo"/>
+        <where>
+            <if test="definitionId != null">and definition_id = #{definitionId}</if>
+            <if test="businessNo != null and businessNo != ''">and business_no = #{businessNo}</if>
+            <if test="title != null and title != ''">and title like concat('%', #{title}, '%')</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+            <if test="applicant != null and applicant != ''">and applicant = #{applicant}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="insertInstance" parameterType="BizProcessInstance" useGeneratedKeys="true" keyProperty="instanceId">
+        insert into biz_process_instance (
+            definition_id, definition_name, form_template_id, proc_inst_id,
+            business_no, title, status, current_node_code, current_node_name,
+            applicant, applicant_dept_id, apply_time, create_by, create_time
+        ) values (
+            #{definitionId}, #{definitionName}, #{formTemplateId}, #{procInstId},
+            #{businessNo}, #{title}, #{status}, #{currentNodeCode}, #{currentNodeName},
+            #{applicant}, #{applicantDeptId}, #{applyTime}, #{createBy}, sysdate()
+        )
+    </insert>
+
+    <update id="updateInstance" parameterType="BizProcessInstance">
+        update biz_process_instance
+        <set>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="procInstId != null">proc_inst_id = #{procInstId},</if>
+            <if test="currentNodeCode != null">current_node_code = #{currentNodeCode},</if>
+            <if test="currentNodeName != null">current_node_name = #{currentNodeName},</if>
+            <if test="completeTime != null">complete_time = #{completeTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where instance_id = #{instanceId}
+    </update>
+
+    <delete id="deleteInstanceById" parameterType="Long">
+        delete from biz_process_instance where instance_id = #{instanceId}
+    </delete>
+
+    <select id="selectInstanceCountByDay" resultType="java.util.HashMap">
+        SELECT DATE(apply_time) as day, COUNT(*) as count
+        FROM biz_process_instance
+        WHERE apply_time >= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)
+        GROUP BY DATE(apply_time)
+        ORDER BY day
+    </select>
+</mapper>

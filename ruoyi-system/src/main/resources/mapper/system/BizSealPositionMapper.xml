@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizSealPositionMapper">
+
+    <resultMap type="BizSealPosition" id="BizSealPositionResult">
+        <result property="positionId"       column="position_id"       />
+        <result property="sealId"           column="seal_id"           />
+        <result property="formTemplateId"   column="form_template_id"  />
+        <result property="positionName"     column="position_name"     />
+        <result property="posX"             column="pos_x"             />
+        <result property="posY"             column="pos_y"             />
+        <result property="sealWidth"        column="seal_width"        />
+        <result property="sealHeight"       column="seal_height"       />
+        <result property="pageNo"           column="page_no"           />
+        <result property="sort"             column="sort"              />
+        <result property="createBy"         column="create_by"         />
+        <result property="createTime"       column="create_time"       />
+        <result property="updateBy"         column="update_by"         />
+        <result property="updateTime"       column="update_time"       />
+        <result property="remark"           column="remark"            />
+        <result property="sealName"         column="seal_name"         />
+        <result property="templateName"     column="template_name"     />
+        <result property="nodeCode"         column="node_code"         />
+    </resultMap>
+
+    <sql id="selectPositionVo">
+        select p.position_id, p.seal_id, p.form_template_id, p.position_name, p.pos_x, p.pos_y,
+               p.seal_width, p.seal_height, p.page_no, p.sort, p.node_code,
+               p.create_by, p.create_time, p.update_by, p.update_time, p.remark,
+               s.seal_name, t.template_name
+        from biz_seal_position p
+        left join biz_seal s on p.seal_id = s.seal_id
+        left join biz_form_template t on p.form_template_id = t.template_id
+    </sql>
+
+    <select id="selectPositionById" parameterType="Long" resultMap="BizSealPositionResult">
+        <include refid="selectPositionVo"/>
+        where p.position_id = #{positionId}
+    </select>
+
+    <select id="selectPositionList" parameterType="BizSealPosition" resultMap="BizSealPositionResult">
+        <include refid="selectPositionVo"/>
+        <where>
+            <if test="sealId != null">
+                AND p.seal_id = #{sealId}
+            </if>
+            <if test="formTemplateId != null">
+                AND p.form_template_id = #{formTemplateId}
+            </if>
+            <if test="positionName != null and positionName != ''">
+                AND p.position_name like concat('%', #{positionName}, '%')
+            </if>
+        </where>
+        order by p.seal_id, p.form_template_id, p.sort
+    </select>
+
+    <insert id="insertPosition" parameterType="BizSealPosition" useGeneratedKeys="true" keyProperty="positionId">
+        insert into biz_seal_position (
+            <if test="sealId != null">seal_id,</if>
+            <if test="formTemplateId != null">form_template_id,</if>
+            <if test="positionName != null and positionName != ''">position_name,</if>
+            <if test="posX != null">pos_x,</if>
+            <if test="posY != null">pos_y,</if>
+            <if test="sealWidth != null">seal_width,</if>
+            <if test="sealHeight != null">seal_height,</if>
+            <if test="pageNo != null">page_no,</if>
+            <if test="sort != null">sort,</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="sealId != null">#{sealId},</if>
+            <if test="formTemplateId != null">#{formTemplateId},</if>
+            <if test="positionName != null and positionName != ''">#{positionName},</if>
+            <if test="posX != null">#{posX},</if>
+            <if test="posY != null">#{posY},</if>
+            <if test="sealWidth != null">#{sealWidth},</if>
+            <if test="sealHeight != null">#{sealHeight},</if>
+            <if test="pageNo != null">#{pageNo},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updatePosition" parameterType="BizSealPosition">
+        update biz_seal_position
+        <set>
+            <if test="sealId != null">seal_id = #{sealId},</if>
+            <if test="formTemplateId != null">form_template_id = #{formTemplateId},</if>
+            <if test="positionName != null and positionName != ''">position_name = #{positionName},</if>
+            <if test="posX != null">pos_x = #{posX},</if>
+            <if test="posY != null">pos_y = #{posY},</if>
+            <if test="sealWidth != null">seal_width = #{sealWidth},</if>
+            <if test="sealHeight != null">seal_height = #{sealHeight},</if>
+            <if test="pageNo != null">page_no = #{pageNo},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="nodeCode != null">node_code = #{nodeCode},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where position_id = #{positionId}
+    </update>
+
+    <delete id="deletePositionById" parameterType="Long">
+        delete from biz_seal_position where position_id = #{positionId}
+    </delete>
+
+    <delete id="deletePositionByIds" parameterType="Long">
+        delete from biz_seal_position where position_id in
+        <foreach item="positionId" collection="array" open="(" separator="," close=")">
+            #{positionId}
+        </foreach>
+    </delete>
+
+</mapper>

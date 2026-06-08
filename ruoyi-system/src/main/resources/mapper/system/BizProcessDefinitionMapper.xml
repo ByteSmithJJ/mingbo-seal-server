@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizProcessDefinitionMapper">
+
+    <resultMap type="BizProcessDefinition" id="BizProcessDefinitionResult">
+        <result property="definitionId"     column="definition_id"     />
+        <result property="definitionName"   column="definition_name"   />
+        <result property="definitionKey"    column="definition_key"    />
+        <result property="bpmnXml"          column="bpmn_xml"          />
+        <result property="formTemplateId"   column="form_template_id"  />
+        <result property="deploymentId"     column="deployment_id"     />
+        <result property="version"          column="version"           />
+        <result property="status"           column="status"            />
+        <result property="delFlag"          column="del_flag"          />
+        <result property="createBy"         column="create_by"         />
+        <result property="createTime"       column="create_time"       />
+        <result property="updateBy"         column="update_by"         />
+        <result property="updateTime"       column="update_time"       />
+        <result property="remark"           column="remark"            />
+    </resultMap>
+
+    <sql id="selectDefinitionVo">
+        select definition_id, definition_name, definition_key, bpmn_xml, form_template_id,
+               deployment_id, version, status, del_flag,
+               create_by, create_time, update_by, update_time, remark
+        from biz_process_definition
+    </sql>
+
+    <select id="selectDefinitionById" parameterType="Long" resultMap="BizProcessDefinitionResult">
+        <include refid="selectDefinitionVo"/>
+        where definition_id = #{definitionId}
+    </select>
+
+    <select id="selectDefinitionList" parameterType="BizProcessDefinition" resultMap="BizProcessDefinitionResult">
+        <include refid="selectDefinitionVo"/>
+        <where>
+            <if test="definitionName != null and definitionName != ''">
+                AND definition_name like concat('%', #{definitionName}, '%')
+            </if>
+            <if test="definitionKey != null and definitionKey != ''">
+                AND definition_key like concat('%', #{definitionKey}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            and del_flag = '0'
+        </where>
+        order by definition_id desc
+    </select>
+
+    <select id="checkDefinitionKeyUnique" parameterType="BizProcessDefinition" resultMap="BizProcessDefinitionResult">
+        <include refid="selectDefinitionVo"/>
+        where definition_key = #{definitionKey} and del_flag = '0'
+        <if test="definitionId != null">
+            and definition_id != #{definitionId}
+        </if>
+        limit 1
+    </select>
+
+    <insert id="insertDefinition" parameterType="BizProcessDefinition" useGeneratedKeys="true" keyProperty="definitionId">
+        insert into biz_process_definition (
+            <if test="definitionName != null and definitionName != ''">definition_name,</if>
+            <if test="definitionKey != null and definitionKey != ''">definition_key,</if>
+            <if test="bpmnXml != null">bpmn_xml,</if>
+            <if test="formTemplateId != null">form_template_id,</if>
+            <if test="version != null">version,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="definitionName != null and definitionName != ''">#{definitionName},</if>
+            <if test="definitionKey != null and definitionKey != ''">#{definitionKey},</if>
+            <if test="bpmnXml != null">#{bpmnXml},</if>
+            <if test="formTemplateId != null">#{formTemplateId},</if>
+            <if test="version != null">#{version},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateDefinition" parameterType="BizProcessDefinition">
+        update biz_process_definition
+        <set>
+            <if test="definitionName != null and definitionName != ''">definition_name = #{definitionName},</if>
+            <if test="definitionKey != null and definitionKey != ''">definition_key = #{definitionKey},</if>
+            <if test="bpmnXml != null">bpmn_xml = #{bpmnXml},</if>
+            <if test="formTemplateId != null">form_template_id = #{formTemplateId},</if>
+            <if test="deploymentId != null and deploymentId != ''">deployment_id = #{deploymentId},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where definition_id = #{definitionId}
+    </update>
+
+    <delete id="deleteDefinitionById" parameterType="Long">
+        update biz_process_definition set del_flag = '2' where definition_id = #{definitionId}
+    </delete>
+
+    <delete id="deleteDefinitionByIds" parameterType="Long">
+        update biz_process_definition set del_flag = '2' where definition_id in
+        <foreach item="definitionId" collection="array" open="(" separator="," close=")">
+            #{definitionId}
+        </foreach>
+    </delete>
+
+</mapper>
